@@ -42,10 +42,30 @@ class LSC_DB {
 		return self::query( $sql );
 	}
 
+	static function update_member( $id, $name, $address = '', $address2 = '', $phone = '', $email = '', $gender = 'M', $is_exec = 0 ) {
+		$sql = sprintf( "UPDATE members SET name = '%s', address = '%s', address2 = '%s', phone = '%s', email = '%s', gender = '%s', is_exec = %s WHERE id = %d",
+			mysqli_escape_string( self::$dbh, $name ),
+			mysqli_escape_string( self::$dbh, $address ),
+			mysqli_escape_string( self::$dbh, $address2 ),
+			mysqli_escape_string( self::$dbh, $phone ),
+			mysqli_escape_string( self::$dbh, $email ),
+			$gender === 'F' ? 'F' : 'M',
+			$is_exec ? '1' : '0',
+			(int) $id
+		);
+		return self::query( $sql );
+	}
+
+	static function get_member( $id ) {
+		$sql = sprintf( "SELECT name, address, address2, phone, email, gender, is_exec FROM members WHERE id = %d", $id );
+		$row = self::query( $sql );
+		return mysqli_fetch_row( $row );
+	}
+
 	static function list_members() {
 		$ret = array();
 
-		$sql = "SELECT * FROM members";
+		$sql = "SELECT * FROM members ORDER BY name";
 		$rows = self::query( $sql );
 		foreach ( $rows as $row ) {
 			$ret[] = $row;
@@ -55,6 +75,57 @@ class LSC_DB {
 
 	static function delete_member( $id ) {
 		$sql = sprintf( "DELETE FROM members WHERE id = %d", $id );
+		return self::query( $sql );
+	}
+
+	static function create_sections_table() {
+		$sql = "CREATE TABLE IF NOT EXISTS sections (
+			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			name VARCHAR(255) NOT NULL DEFAULT '',
+			admin_member_id BIGINT(20) UNSIGNED,
+			PRIMARY KEY (id)
+		)";
+		return self::query( $sql );
+	}
+
+	static function create_section( $name, $admin_member_id = 0 ) {
+		$sql = sprintf( "INSERT INTO sections (name, admin_member_id) VALUES('%s', %d)",
+			mysqli_escape_string( self::$dbh, $name ),
+			(int) $admin_member_id
+		);
+		return self::query( $sql );
+	}
+
+	static function update_section( $id, $name, $admin_member_id = 0 ) {
+		$sql = sprintf( "UPDATE sections SET name = '%s', admin_member_id = %d WHERE id = %d",
+			mysqli_escape_string( self::$dbh, $name ),
+			(int) $admin_member_id,
+			(int) $id
+		);
+		return self::query( $sql );
+	}
+
+	static function get_section( $id ) {
+		$sql = sprintf( "SELECT name, admin_member_id FROM sections WHERE id = %d", $id );
+		$row = self::query( $sql );
+		return mysqli_fetch_row( $row );
+	}
+
+	static function list_sections() {
+		$ret = array();
+
+		$sql = "SELECT sections.id, sections.name, sections.admin_member_id, members.name AS admin_member_name FROM sections"
+				. " LEFT JOIN members ON sections.admin_member_id = members.id ORDER BY sections.id";
+		$rows = self::query( $sql );
+		foreach ( $rows as $row ) {
+			error_log( __FUNCTION__ . " row=" . print_r( $row, true ) );
+			$ret[] = $row;
+		}
+		return $ret;
+	}
+
+	static function delete_section( $id ) {
+		$sql = sprintf( "DELETE FROM sections WHERE id = %d", $id );
 		return self::query( $sql );
 	}
 
