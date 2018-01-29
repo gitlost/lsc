@@ -24,7 +24,7 @@ if ( $create || $update ) {
 		LSC_DB::update_section( $id, $name, $admin_member_id );
 	}
 
-	$location = 'index.php';
+	$location = 'sections.php?action=list';
 	$status = 302;
 	header( "Location: $location", true, $status );
 	exit;
@@ -33,12 +33,12 @@ if ( $create || $update ) {
 	
 	LSC_DB::delete_section( $id );
 
-	$location = 'index.php';
+	$location = 'sections.php?action=list';
 	$status = 302;
 	header( "Location: $location", true, $status );
 	exit;
 } elseif ( $cancel ) {
-	$location = 'index.php';
+	$location = 'sections.php?action=list';
 	$status = 302;
 	header( "Location: $location", true, $status );
 	exit;
