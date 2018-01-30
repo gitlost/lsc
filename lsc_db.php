@@ -31,7 +31,7 @@ class LSC_DB {
 	}
 
 	static function create_member( $name, $address = '', $address2 = '', $phone = '', $email = '', $gender = 'M', $primary_section_id = '', $other_section_ids = '' ) {
-		$sql = sprintf( "INSERT INTO members (name, address, address2, phone, email, gender, primary_section_id) VALUES('%s', '%s', '%s', '%s', '%s', '%s', %d, %d)",
+		$sql = sprintf( "INSERT INTO members (name, address, address2, phone, email, gender, primary_section_id) VALUES('%s', '%s', '%s', '%s', '%s', '%s', %d)",
 			mysqli_escape_string( self::$dbh, $name ),
 			mysqli_escape_string( self::$dbh, $address ),
 			mysqli_escape_string( self::$dbh, $address2 ),
