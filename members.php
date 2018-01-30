@@ -145,7 +145,7 @@ foreach ( $sections as $section ) {
 <a href="members.php?action=create">create members</a>
 <form>
 <table>
-<tr><td>ID</td><td>Name</td><td>Address</td><td>Address2</td><td>Phone</td><td>Email</td><td>Gender</td><td>Primary Section</td><td>Exec?</td></tr>
+<tr><td>ID</td><td>Name</td><td>Address</td><td>Address2</td><td>Phone</td><td>Email</td><td>Gender</td><td>Primary Section</td></tr>
 <?php
 	foreach ( $rows as $row ) {
 ?>
