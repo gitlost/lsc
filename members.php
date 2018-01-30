@@ -22,14 +22,13 @@ if ( $create || $update ) {
 	$phone = isset( $_REQUEST['phone'] ) ? $_REQUEST['phone'] : '';
 	$email = isset( $_REQUEST['email'] ) ? $_REQUEST['email'] : '';
 	$gender = isset( $_REQUEST['gender'] ) ? $_REQUEST['gender'] : '';
-	$is_exec = isset( $_REQUEST['is_exec'] ) ? $_REQUEST['is_exec'] : '';
 	$primary_section_id = isset( $_REQUEST['primary_section_id'] ) ? $_REQUEST['primary_section_id'] : '';
 	$other_section_ids = isset( $_REQUEST['other_section_ids'] ) ? $_REQUEST['other_section_ids'] : '';
 
 	if ( $create ) {
-		LSC_DB::create_member( $name, $address, $address2, $phone, $email, $gender, $is_exec, $primary_section_id, $other_section_ids );
+		LSC_DB::create_member( $name, $address, $address2, $phone, $email, $gender, $primary_section_id, $other_section_ids );
 	} else {
-		LSC_DB::update_member( $id, $name, $address, $address2, $phone, $email, $gender, $is_exec, $primary_section_id, $other_section_ids );
+		LSC_DB::update_member( $id, $name, $address, $address2, $phone, $email, $gender, $primary_section_id, $other_section_ids );
 	}
 
 	$location = 'members.php?action=list';
@@ -64,10 +63,10 @@ if ( $create || $update ) {
 if ( $edit || $action === 'create' ) {
 	if ( $edit ) {
 		$id = (int) substr( $edit, strlen( 'Edit ' ) );
-		list( $name, $address, $address2, $phone, $email, $gender, $is_exec, $primary_section_id ) = LSC_DB::get_member( $id );
+		list( $name, $address, $address2, $phone, $email, $gender, $primary_section_id ) = LSC_DB::get_member( $id );
 		$other_section_ids = LSC_DB::get_member_sections( $id );
 	} else {
-		$id = $name = $address = $address2 = $phone = $email = $gender = $is_exec = $primary_section_id = '';
+		$id = $name = $address = $address2 = $phone = $email = $gender = $primary_section_id = '';
 		$other_section_ids = array();
 	}
 	$sections = LSC_DB::list_sections();
@@ -132,13 +131,6 @@ foreach ( $sections as $section ) {
 </td>
 </tr>
 <tr>
-<td>Exec?</td>
-<td>
-<label><input type='radio' name='is_exec' value='1'<?php if ( $is_exec ) echo ' checked'; ?>>Yes</label>
-<label><input type='radio' name='is_exec' value='0'<?php if ( ! $is_exec ) echo ' checked'; ?>>No</label>
-</td>
-</tr>
-<tr>
 <td colspan="2">
 <input type="submit" name="<?php echo $edit ? 'update' : 'create'; ?>" value="<?php echo $edit ? 'Update' : 'Create'; ?>">
 <input type="submit" name="cancel" value="Cancel">
@@ -166,7 +158,6 @@ foreach ( $sections as $section ) {
 <td><?php echo $row['email']; ?></td>
 <td><?php echo $row['gender']; ?></td>
 <td><?php echo $row['primary_section_name']; ?></td>
-<td><?php echo $row['is_exec']; ?></td>
 <td><input type="submit" name="edit" value="Edit <?php echo $row['id']; ?>"></td>
 <td><input type="submit" name="delete" value="Delete <?php echo $row['id']; ?>"></td>
 </tr>

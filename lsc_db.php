@@ -23,7 +23,6 @@ class LSC_DB {
 			phone VARCHAR(255) NOT NULL DEFAULT '',
 			email VARCHAR(255) NOT NULL DEFAULT '',
 			gender ENUM('M', 'F') NOT NULL DEFAULT 'M',
-			is_exec TINYINT(1) NOT NULL DEFAULT 0,
 			primary_section_id BIGINT(20) UNSIGNED,
 			PRIMARY KEY (id)
 		)";
@@ -31,15 +30,14 @@ class LSC_DB {
 		self::add_col_if_not_exists( 'members', 'primary_section_id', 'BIGINT(20) UNSIGNED' );
 	}
 
-	static function create_member( $name, $address = '', $address2 = '', $phone = '', $email = '', $gender = 'M', $is_exec = 0, $primary_section_id = '', $other_section_ids = '' ) {
-		$sql = sprintf( "INSERT INTO members (name, address, address2, phone, email, gender, is_exec, primary_section_id) VALUES('%s', '%s', '%s', '%s', '%s', '%s', %d, %d)",
+	static function create_member( $name, $address = '', $address2 = '', $phone = '', $email = '', $gender = 'M', $primary_section_id = '', $other_section_ids = '' ) {
+		$sql = sprintf( "INSERT INTO members (name, address, address2, phone, email, gender, primary_section_id) VALUES('%s', '%s', '%s', '%s', '%s', '%s', %d, %d)",
 			mysqli_escape_string( self::$dbh, $name ),
 			mysqli_escape_string( self::$dbh, $address ),
 			mysqli_escape_string( self::$dbh, $address2 ),
 			mysqli_escape_string( self::$dbh, $phone ),
 			mysqli_escape_string( self::$dbh, $email ),
 			$gender === 'F' ? 'F' : 'M',
-			(int) $is_exec,
 			(int) $primary_section_id
 		);
 		self::query( $sql );
@@ -47,15 +45,14 @@ class LSC_DB {
 		self::create_member_sections( $id, $primary_section_id, $other_section_ids );
 	}
 
-	static function update_member( $id, $name, $address = '', $address2 = '', $phone = '', $email = '', $gender = 'M', $is_exec = 0, $primary_section_id = '', $other_section_ids = '' ) {
-		$sql = sprintf( "UPDATE members SET name = '%s', address = '%s', address2 = '%s', phone = '%s', email = '%s', gender = '%s', is_exec = %d, primary_section_id = %d WHERE id = %d",
+	static function update_member( $id, $name, $address = '', $address2 = '', $phone = '', $email = '', $gender = 'M', $primary_section_id = '', $other_section_ids = '' ) {
+		$sql = sprintf( "UPDATE members SET name = '%s', address = '%s', address2 = '%s', phone = '%s', email = '%s', gender = '%s', primary_section_id = %d WHERE id = %d",
 			mysqli_escape_string( self::$dbh, $name ),
 			mysqli_escape_string( self::$dbh, $address ),
 			mysqli_escape_string( self::$dbh, $address2 ),
 			mysqli_escape_string( self::$dbh, $phone ),
 			mysqli_escape_string( self::$dbh, $email ),
 			$gender === 'F' ? 'F' : 'M',
-			(int) $is_exec,
 			(int) $primary_section_id,
 			(int) $id
 		);
@@ -65,7 +62,7 @@ class LSC_DB {
 	}
 
 	static function get_member( $id ) {
-		$sql = sprintf( "SELECT name, address, address2, phone, email, gender, is_exec, primary_section_id FROM members WHERE members.id = %d", $id );
+		$sql = sprintf( "SELECT name, address, address2, phone, email, gender, primary_section_id FROM members WHERE members.id = %d", $id );
 		$row = self::query( $sql );
 		return mysqli_fetch_row( $row );
 	}
@@ -73,7 +70,7 @@ class LSC_DB {
 	static function list_members() {
 		$ret = array();
 
-		$sql = "SELECT members.id, members.name, members.address, members.address2, members.phone, members.email, members.gender, members.is_exec, sections.name AS primary_section_name FROM members"
+		$sql = "SELECT members.id, members.name, members.address, members.address2, members.phone, members.email, members.gender, sections.name AS primary_section_name FROM members"
 				. " LEFT JOIN sections ON sections.id = members.primary_section_id ORDER BY members.name";
 		$rows = self::query( $sql );
 		foreach ( $rows as $row ) {
